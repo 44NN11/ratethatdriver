@@ -38,9 +38,8 @@ Route::post('/logout', function () {
     return redirect('/')->with('status', 'You have been logged out successfully.');
 })->name('logout');
 
-// Profile route (protected - only for logged in users)
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', function () {
-        return view('auth.profile');
-    })->name('profile');
-});
+// Profile route
+Route::get('/profile', function () {
+    return view('auth.profile');
+})->name('profile');
+
