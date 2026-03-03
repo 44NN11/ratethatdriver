@@ -89,45 +89,64 @@
             return await response.json();
         }
         // Check authentication state and update navigation
-        function updateNavigation() {
-            const user = localStorage.getItem('user');
-            const navLinks = document.getElementById('navLinks');
-            
-            if (user) {
-                const userData = JSON.parse(user);
-                navLinks.innerHTML = `
-                    <span class="text-sm text-gray-600">Welcome, ${userData.name}</span>
-                    <div class="relative group">
-                        <button class="flex items-center text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                            Profile
-                            <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border hidden group-hover:block z-50">
-                            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
-                            <a href="/my-ratings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Ratings</a>
-                            <div class="border-t border-gray-200"></div>
-                            <form action="/logout" method="POST" class="block">
-                                @csrf
-                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    Logout
+                function updateNavigation() {
+                    const user = localStorage.getItem('user');
+                    const navLinks = document.getElementById('navLinks');
+                    
+                    if (user) {
+                        const userData = JSON.parse(user);
+                        navLinks.innerHTML = `
+                            <div class="relative">
+                                <button onclick="toggleDropdown()" id="profileBtn" class="flex items-center text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                                    <span class="mr-1">👤</span>
+                                    <span>Welcome, ${userData.name}</span>
+                                    <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
                                 </button>
-                            </form>
-                        </div>
-                    </div>
-                `;
-            } else {
-                navLinks.innerHTML = `
-                    <a href="/login" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                        Login
-                    </a>
-                    <a href="/register" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
-                        Register
-                    </a>
-                `;
-            }
-        }
+                                <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border hidden z-50">
+                                    <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                        📱 My Profile
+                                    </a>
+                                    <a href="/my-ratings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                        ⭐ My Ratings
+                                    </a>
+                                    <form action="/logout" method="POST" class="block">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 hover:text-red-700 font-medium">
+                                            🔐 Logout
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        navLinks.innerHTML = `
+                            <a href="/login" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                                Login
+                            </a>
+                            <a href="/register" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
+                                Register
+                            </a>
+                        `;
+                    }
+                }
+
+                function toggleDropdown() {
+                    const dropdown = document.getElementById('dropdownMenu');
+                    dropdown.classList.toggle('hidden');
+                }
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    const dropdown = document.getElementById('dropdownMenu');
+                    const profileBtn = document.getElementById('profileBtn');
+                    
+                    if (dropdown && profileBtn && !dropdown.contains(e.target) && !profileBtn.contains(e.target)) {
+                        dropdown.classList.add('hidden');
+                    }
+                });
+
 
         // Run on page load
         document.addEventListener('DOMContentLoaded', updateNavigation);
